@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#100d15">
+<meta name="description" content="Torque is a working-machines add-on for Minecraft Bedrock: power flows through shafts and cogwheels to presses, mixers, belts and trains. Version 1.0.1, 650+ blocks and items, stable Script API only, all original art.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Torque - Working machines for Minecraft Bedrock">
+<meta property="og:description" content="Torque is a working-machines add-on for Minecraft Bedrock: power flows through shafts and cogwheels to presses, mixers, belts and trains. Version 1.0.1, 650+ blocks and items, stable Script API only, all original art.">
+<meta property="og:image" content="https://griffinhjones-commits.github.io/torque/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="675">
+<meta property="og:url" content="https://griffinhjones-commits.github.io/torque/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23100d15'/%3E%3Ccircle cx='32' cy='32' r='17' fill='none' stroke='%23e2b04a' stroke-width='8' stroke-dasharray='7 4.4'/%3E%3Ccircle cx='32' cy='32' r='6' fill='%23e2b04a'/%3E%3C/svg%3E">
+<title>Torque - Working machines for Minecraft Bedrock</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@800;900&family=Source+Sans+3:wght@400;600&display=swap">
+<style>
+/* Layout: one dark workshop wall - name and pitch up top, then the machines running in game as one full-width column of loops
+   (developer 10-20: stacked vertically), the five power stages as a machine-room ledger, the review copy request. Single deliberate dark look: brass on soot, like a gauge face. */
+:root {
+  --bg: #100d15;
+  --panel: #1b1724;
+  --ink: #f2e9da;
+  --muted: #a99fb5;
+  --brass: #e2b04a;
+  --line: #2f2839;
+  --display: "Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
+  --body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 1.0625rem/1.55 var(--body); }
+.wrap {
+  max-width: 72rem; margin: 0 auto; display: grid; gap: clamp(2.25rem, 5vw, 3.5rem);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: clamp(1.75rem, 6vw, 4rem) 2.5rem;
+}
+h1 { font: 900 clamp(3.6rem, 13vw, 7.5rem)/0.88 var(--display); letter-spacing: 0.04em; margin: 0; text-transform: uppercase; color: var(--brass); }
+h2 { font: 800 1.35rem/1.1 var(--display); letter-spacing: 0.07em; text-transform: uppercase; margin: 0; color: var(--brass); text-wrap: balance; }
+h3 { font: 800 1.15rem/1.1 var(--display); letter-spacing: 0.06em; text-transform: uppercase; margin: 0; color: var(--ink); }
+p { margin: 0; }
+
+.hero { display: grid; gap: 1.1rem; max-width: 46rem; margin-inline: auto; justify-items: center; text-align: center;
+  padding: clamp(2rem, 7vw, 3rem) max(16px, env(safe-area-inset-right, 0px)) clamp(2.25rem, 7vw, 3rem) max(16px, env(safe-area-inset-left, 0px)); }
+.lede { font-size: clamp(1.15rem, 2.3vw, 1.4rem); max-width: 40rem; text-wrap: pretty; }
+.facts { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem 1.5rem; color: var(--muted); }
+.facts b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* The stage (developer 10-21: "full screen to the edges at the top"): one full-bleed band, no gutters, no rounded corners.
+   Phones: the film edge to edge across the top (the whole 9:16 picture), the name and pitch under it.
+   Wide screens: the film full height flush to the right edge, the name and pitch on the left, over a blurred, darkened copy of its poster. */
+.stage { position: relative; isolation: isolate; display: grid; overflow: hidden; background: var(--bg); border-bottom: 1px solid var(--line); }
+.stage::before { content: ""; position: absolute; inset: -48px; z-index: -1; background: var(--poster, none) center / cover no-repeat; filter: blur(32px) brightness(0.32) saturate(1.15); }
+.stage .film { margin: 0; min-width: 0; }
+.stage .film .vp-box { width: 100%; border-radius: 0; background: #0b0910; }
+.film-note { display: grid; gap: 0.6rem; justify-items: center; max-width: 32rem; }
+.film-note p { color: var(--muted); font-size: 0.85rem; }
+@media (min-width: 900px) {
+  .stage { grid-template-columns: minmax(0, 1fr) auto; align-items: center; min-height: 100vh; min-height: 100svh; }
+  .stage .film { order: 2; align-self: stretch; }
+  .stage .film .vp-box { height: 100vh; height: 100svh; width: calc(100vh * 9 / 16); width: calc(100svh * 9 / 16); }
+  .stage .hero { order: 1; justify-items: start; text-align: left; margin: 0; max-width: 44rem; padding: 3rem clamp(2rem, 6vw, 6rem); }
+  .stage .facts { justify-content: flex-start; }
+  .stage .film-note { justify-items: start; }
+}
+.sound { display: inline-flex; align-items: center; gap: 0.45rem; background: transparent; color: var(--brass); border: 1px solid rgba(226, 176, 74, 0.55); border-radius: 999px; padding: 0.4rem 1rem 0.4rem 0.8rem; font: 600 0.92rem var(--body); cursor: pointer; }
+.sound:hover { background: rgba(226, 176, 74, 0.08); }
+.sound svg { width: 1.1rem; height: 1.1rem; }
+.sound .on { display: none; }
+.sound[aria-pressed="true"] .on { display: inline; }
+.sound[aria-pressed="true"] .off { display: none; }
+.sound:focus-visible { outline: 3px solid var(--brass); outline-offset: 2px; }
+
+.ingame { display: grid; gap: 1.25rem; }
+.ingame-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.25rem 1.5rem; padding-bottom: 0.9rem; border-bottom: 1px solid var(--line); }
+.ingame-head p { color: var(--muted); font-size: 0.95rem; }
+.clips { display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(2rem, 5vw, 3.25rem); }
+.clip { margin: 0; display: grid; gap: 0.75rem; min-width: 0; }
+.clip .vp-box { border-radius: 8px; border: 1px solid var(--line); background: var(--panel); box-shadow: 0 22px 50px -32px rgba(0, 0, 0, 0.8); }
+.clip figcaption { display: grid; gap: 0.2rem; max-width: 44rem; }
+.clip figcaption p { color: var(--muted); }
+
+.stages { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); border-top: 1px solid var(--line); }
+.stages li { display: grid; gap: 0.35rem; padding: 1.1rem 1.25rem 1.2rem 0; border-bottom: 1px solid var(--line); min-width: 0; }
+.stages p { color: var(--muted); }
+
+.request { display: grid; gap: 0.75rem; justify-items: start; }
+.cta { display: inline-flex; align-items: center; gap: 0.6rem; background: var(--brass); color: #1a1206; font-weight: 600; text-decoration: none; padding: 0.75rem 1.2rem; border-radius: 8px; }
+.cta:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+.cta[aria-disabled="true"] { background: var(--line); color: var(--muted); pointer-events: none; }
+.note { font-size: 0.95rem; color: var(--muted); max-width: 34rem; }
+.contact { font: 600 1.15rem/1.3 var(--body); }
+.contact .handle { color: var(--brass); font-weight: 600; user-select: all; }
+
+footer { border-top: 1px solid var(--line); padding-top: 1.25rem; font-size: 0.88rem; color: var(--muted); display: grid; gap: 0.3rem; }
+footer b { color: var(--ink); font-weight: 600; }
+footer a { color: var(--brass); text-decoration: none; }
+footer a:hover, footer a:focus-visible { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<header class="stage" style="--poster: url('film/poster.jpg')">
+  <figure class="film">
+    <video data-always="1" data-sources="[{&quot;type&quot;: &quot;video/mp4; codecs=\&quot;av01.0.09M.08\&quot;&quot;, &quot;w&quot;: 1080, &quot;h&quot;: 1920, &quot;fps&quot;: 60, &quot;kbps&quot;: 2734, &quot;src&quot;: &quot;film/torque_film_v6_3.av1.mp4&quot;}, {&quot;type&quot;: &quot;video/mp4; codecs=\&quot;avc1.640032\&quot;&quot;, &quot;w&quot;: 1080, &quot;h&quot;: 1920, &quot;fps&quot;: 60, &quot;kbps&quot;: 2793, &quot;src&quot;: &quot;film/torque_film_v6_3.h264.mp4&quot;}]" data-w="1080" data-h="1920" poster="film/poster.jpg" muted loop playsinline preload="none" aria-label="Torque film: the machines build themselves, then the factory train runs its loop"></video>
+  </figure>
+  <section class="hero" aria-labelledby="name">
+    <h1 id="name">Torque</h1>
+    <p class="lede">Working machines for Minecraft Bedrock. Power flows through shafts and cogwheels from a source to your machines, and everything it drives turns, slows and jams the way a real mechanism would.</p>
+    <ul class="facts">
+      <li><b>Version 1.0.1</b>, finished</li>
+      <li><b>650+</b> blocks and items</li>
+      <li>Stable Script API only, <b>no experimental toggles</b></li>
+      <li>Every texture, model and sound in the pack is <b>our own</b></li>
+    </ul>
+    <div class="film-note"><p>The film is rendered from the add-on's own block models on a set of Minecraft block textures &copy; Mojang AB. Not in-game footage.</p>
+    <button type="button" class="sound" aria-pressed="false"><svg class="off" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3z" fill="currentColor"/><path d="M16 9l5 6M21 9l-5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg><svg class="on" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg><span>Film sound on</span></button></div>
+  </section>
+</header>
+<main class="wrap">
+
+  <section class="ingame" aria-labelledby="ingame-title">
+    <div class="ingame-head">
+      <h2 id="ingame-title">Running in game</h2>
+      <p>In-game footage from Torque 1.0.1, recorded at 2560 × 1440, 60 fps.</p>
+    </div>
+    <div class="clips">
+      <figure class="clip">
+        <video data-sources="[{&quot;src&quot;: &quot;clips/train_dev_loop3.av1.mp4&quot;, &quot;type&quot;: &quot;video/mp4; codecs=\&quot;av01.0.12M.08\&quot;&quot;, &quot;w&quot;: 2560, &quot;h&quot;: 1440, &quot;fps&quot;: 60, &quot;kbps&quot;: 3473}, {&quot;src&quot;: &quot;clips/train_dev_loop3.mp4&quot;, &quot;type&quot;: &quot;video/mp4; codecs=\&quot;avc1.640033\&quot;&quot;, &quot;w&quot;: 2560, &quot;h&quot;: 1440, &quot;fps&quot;: 60, &quot;kbps&quot;: 3468}]" data-w="2560" data-h="1440" poster="clips/train_dev_loop3.jpg" muted loop playsinline preload="none" aria-label="Factory railway: A scheduled train runs a loop around the factory, stopping at each station before setting off again."></video>
+        <figcaption><h3>Factory railway</h3><p>A scheduled train runs a loop around the factory, stopping at each station before setting off again.</p></figcaption>
+      </figure>
+      <figure class="clip">
+        <video data-sources="[{&quot;src&quot;: &quot;clips/windmill_close_v12h.av1.mp4&quot;, &quot;type&quot;: &quot;video/mp4; codecs=\&quot;av01.0.12M.08\&quot;&quot;, &quot;w&quot;: 2560, &quot;h&quot;: 1440, &quot;fps&quot;: 60, &quot;kbps&quot;: 13510}, {&quot;src&quot;: &quot;clips/windmill_close_v12h.mp4&quot;, &quot;type&quot;: &quot;video/mp4; codecs=\&quot;avc1.640033\&quot;&quot;, &quot;w&quot;: 2560, &quot;h&quot;: 1440, &quot;fps&quot;: 60, &quot;kbps&quot;: 14847}]" data-w="2560" data-h="1440" poster="clips/windmill_close_v12h.jpg" muted loop playsinline preload="none" aria-label="Windmill: The sails turn together as one piece around the windmill bearing, with the railway viaduct behind."></video>
+        <figcaption><h3>Windmill</h3><p>The sails turn together as one piece around the windmill bearing, with the railway viaduct behind.</p></figcaption>
+      </figure>
+      <figure class="clip">
+        <video data-sources="[{&quot;src&quot;: &quot;clips/steam_rig_close.av1.mp4&quot;, &quot;type&quot;: &quot;video/mp4; codecs=\&quot;av01.0.12M.08\&quot;&quot;, &quot;w&quot;: 2560, &quot;h&quot;: 1440, &quot;fps&quot;: 60, &quot;kbps&quot;: 8239}, {&quot;src&quot;: &quot;clips/steam_rig_close.mp4&quot;, &quot;type&quot;: &quot;video/mp4; codecs=\&quot;avc1.640033\&quot;&quot;, &quot;w&quot;: 2560, &quot;h&quot;: 1440, &quot;fps&quot;: 60, &quot;kbps&quot;: 14606}]" data-w="2560" data-h="1440" poster="clips/steam_rig_close.jpg" muted loop playsinline preload="none" aria-label="Steam engine: When water is pumped into the tank and then the burners below the tank are fueled, the piston and connecting rod turn the crank on a powered shaft, one stroke per puff of steam."></video>
+        <figcaption><h3>Steam engine</h3><p>When water is pumped into the tank and then the burners below the tank are fueled, the piston and connecting rod turn the crank on a powered shaft, one stroke per puff of steam.</p></figcaption>
+      </figure>
+      <figure class="clip">
+        <video data-sources="[{&quot;src&quot;: &quot;clips/engine_house_v12h2_long.av1.mp4&quot;, &quot;type&quot;: &quot;video/mp4; codecs=\&quot;av01.0.12M.08\&quot;&quot;, &quot;w&quot;: 2560, &quot;h&quot;: 1440, &quot;fps&quot;: 60, &quot;kbps&quot;: 6867}, {&quot;src&quot;: &quot;clips/engine_house_v12h2_long.mp4&quot;, &quot;type&quot;: &quot;video/mp4; codecs=\&quot;avc1.640033\&quot;&quot;, &quot;w&quot;: 2560, &quot;h&quot;: 1440, &quot;fps&quot;: 60, &quot;kbps&quot;: 6173}]" data-w="2560" data-h="1440" poster="clips/engine_house_v12h2_long.jpg" muted loop playsinline preload="none" aria-label="Engine house: The steam engine on its boiler turns the cogwheels, while a drill on a cobblestone generator sends cobblestone along a belt to a pair of crushing wheels that turn it into gravel."></video>
+        <figcaption><h3>Engine house</h3><p>The steam engine on its boiler turns the cogwheels, while a drill on a cobblestone generator sends cobblestone along a belt to a pair of crushing wheels that turn it into gravel.</p></figcaption>
+      </figure>
+      <figure class="clip">
+        <video data-sources="[{&quot;src&quot;: &quot;clips/factory_watermill.av1.mp4&quot;, &quot;type&quot;: &quot;video/mp4; codecs=\&quot;av01.0.12M.08\&quot;&quot;, &quot;w&quot;: 2560, &quot;h&quot;: 1440, &quot;fps&quot;: 60, &quot;kbps&quot;: 4642}, {&quot;src&quot;: &quot;clips/factory_watermill.mp4&quot;, &quot;type&quot;: &quot;video/mp4; codecs=\&quot;avc1.640033\&quot;&quot;, &quot;w&quot;: 2560, &quot;h&quot;: 1440, &quot;fps&quot;: 60, &quot;kbps&quot;: 7175}]" data-w="2560" data-h="1440" poster="clips/factory_watermill.jpg" muted loop playsinline preload="none" aria-label="Water mill: A row of water wheels under a copper trough turns the line shaft that powers the factory hall."></video>
+        <figcaption><h3>Water mill</h3><p>A row of water wheels under a copper trough turns the line shaft that powers the factory hall.</p></figcaption>
+      </figure>
+      <figure class="clip">
+        <video data-sources="[{&quot;src&quot;: &quot;clips/factory_press_close.av1.mp4&quot;, &quot;type&quot;: &quot;video/mp4; codecs=\&quot;av01.0.12M.08\&quot;&quot;, &quot;w&quot;: 2560, &quot;h&quot;: 1440, &quot;fps&quot;: 60, &quot;kbps&quot;: 6243}, {&quot;src&quot;: &quot;clips/factory_press_close.mp4&quot;, &quot;type&quot;: &quot;video/mp4; codecs=\&quot;avc1.640033\&quot;&quot;, &quot;w&quot;: 2560, &quot;h&quot;: 1440, &quot;fps&quot;: 60, &quot;kbps&quot;: 10737}]" data-w="2560" data-h="1440" poster="clips/factory_press_close.jpg" muted loop playsinline preload="none" aria-label="Press on a belt: The mechanical press stamps each ingot into a sheet as the belt carries it past."></video>
+        <figcaption><h3>Press on a belt</h3><p>The mechanical press stamps each ingot into a sheet as the belt carries it past.</p></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section aria-label="What players build">
+    <ul class="stages">
+      <li><h2>Make power</h2><p>Water wheels, windmills, steam engines and a hand crank.</p></li>
+      <li><h2>Carry it</h2><p>Shafts, cogwheels, gearboxes, clutches and chain drives change speed and direction and split power.</p></li>
+      <li><h2>Put it to work</h2><p>Presses, mixers, millstones, saws, drills, fans and deployers turn raw materials into finished goods.</p></li>
+      <li><h2>Move things</h2><p>Belts, funnels, chutes and vaults carry items between machines. Pipes, pumps and tanks move fluids.</p></li>
+      <li><h2>Build things that move</h2><p>Bearings, pistons and pulleys move whole structures. Lay track, add stations and signals, and run trains.</p></li>
+    </ul>
+  </section>
+
+  <section class="request" aria-label="Review copy">
+    <p class="contact">Ask for a personal review copy on Discord: <b class="handle">isthatfinn</b></p>
+    <p class="note">A personal review copy of the add-on and a ready-built showcase world (the engine house, factory, railway and windmill from these clips) for your studio, sent on request.</p>
+  </section>
+
+  <footer>
+    <p><b>Torque Team</b> &middot; Finn (isthatfinn), solo founder &middot; Discord: isthatfinn</p>
+    <p>Email: <a href="mailto:griffinhjones@gmail.com">griffinhjones@gmail.com</a> &middot; Phone: <a href="tel:+17048400863">(704) 840-0863</a></p>
+    <p>&copy; 2026 Torque Team. Independent add-on for Minecraft Bedrock Edition, not affiliated with Mojang or Microsoft.</p>
+  </footer>
+</main>
+<script>
+/* Job:       for every <video data-sources='[...]'> pick the best source this browser can play smoothly (AV1 -> HEVC -> H.264 as listed), load it only near the viewport, play only while on screen
+ * Takes in:  <video data-sources='[{"src","type","w","h","fps","kbps"}, ...]' poster="..."> in preferred order (inline this file in the page; no other hosts)
+ * Gives out: a muted looping inline video in a fixed aspect-ratio box; video.dataset.chosen / chosenWhy record the pick; a "vp:chosen" event; window.VideoPlayer.scan(root) */
+(function () {
+  "use strict";
+  var NEAR = "800px 0px", SHOW = 0.2, HI_RES = 1920 * 1080;
+  var reduced = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : { matches: false };
+  var saveData = !!(navigator.connection && navigator.connection.saveData);
+  var still = function () { return reduced.matches || saveData; };
+
+  var css = ".vp-box{position:relative;display:block;width:100%;overflow:hidden;background:#111}" +
+    ".vp-box>video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}" +
+    ".vp-play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:64px;height:64px;border-radius:50%;border:0;cursor:pointer;" +
+    "background:rgba(0,0,0,.55);color:#fff;font:28px/64px system-ui,sans-serif;text-align:center;padding:0 0 0 4px}" +
+    ".vp-play:focus-visible{outline:3px solid #fff;outline-offset:3px}.vp-box:not(.vp-tap) .vp-play,.vp-box.vp-playing .vp-play{display:none}";
+  function addStyle() {
+    if (document.getElementById("vp-style")) return;
+    var s = document.createElement("style"); s.id = "vp-style"; s.textContent = css; document.head.appendChild(s);
+  }
+
+  function family(type) { return /av01/i.test(type) ? "av1" : /hvc1|hev1/i.test(type) ? "hevc" : "h264"; }
+
+  // Score one source: lower tier = better. 0 smooth (+ power-efficient for AV1/HEVC above 1080p), 1 smooth, 2 supported, 3 canPlayType "probably", 4 "maybe", 9 unplayable.
+  function tierOf(src, probe) {
+    var cpt = probe.canPlayType(src.type || "video/mp4");
+    if (!navigator.mediaCapabilities || !navigator.mediaCapabilities.decodingInfo) {
+      return Promise.resolve({ tier: cpt === "probably" ? 3 : cpt === "maybe" ? 4 : 9, why: "canPlayType " + (cpt || "no") });
+    }
+    var cfg = { type: "file", video: { contentType: src.type, width: src.w || 1920, height: src.h || 1080,
+      bitrate: Math.round((src.kbps || 5000) * 1000), framerate: src.fps || 30 } };
+    return navigator.mediaCapabilities.decodingInfo(cfg).then(function (r) {
+      var hi = (src.w || 0) * (src.h || 0) > HI_RES, needPE = hi && family(src.type) !== "h264";
+      var flags = (r.supported ? "supported" : "unsupported") + (r.smooth ? " smooth" : "") + (r.powerEfficient ? " powerEfficient" : "");
+      if (r.supported && r.smooth && (!needPE || r.powerEfficient)) return { tier: 0, why: flags };
+      if (r.supported && r.smooth) return { tier: 1, why: flags };
+      if (r.supported) return { tier: 2, why: flags };
+      return { tier: cpt === "probably" ? 3 : cpt === "maybe" ? 4 : 9, why: flags + ", canPlayType " + (cpt || "no") };
+    }, function () { return { tier: cpt === "probably" ? 3 : cpt === "maybe" ? 4 : 9, why: "decodingInfo failed, canPlayType " + (cpt || "no") }; });
+  }
+
+  // Ordered candidates: playable sources by (tier, listed order); the last listed source is always kept as the final fallback.
+  function rank(sources, probe) {
+    return Promise.all(sources.map(function (s) { return tierOf(s, probe); })).then(function (tiers) {
+      var list = sources.map(function (s, i) { return { s: s, i: i, tier: tiers[i].tier, why: tiers[i].why }; })
+        .filter(function (c) { return c.tier < 9; })
+        .sort(function (a, b) { return a.tier - b.tier || a.i - b.i; });
+      var last = sources.length - 1;
+      if (last >= 0 && !list.some(function (c) { return c.i === last; })) list.push({ s: sources[last], i: last, tier: 9, why: "last-source fallback" });
+      return list;
+    });
+  }
+
+  function Player(v) {
+    var sources; try { sources = JSON.parse(v.getAttribute("data-sources")) || []; } catch (e) { sources = []; }
+    this.v = v; this.sources = sources; this.queue = null; this.visible = false; this.started = false; this.userPaused = false;
+    v.muted = true; v.defaultMuted = true; v.setAttribute("muted", ""); v.loop = true; v.playsInline = true; v.setAttribute("playsinline", "");
+    v.removeAttribute("autoplay"); v.preload = "none";
+    if (!v.getAttribute("poster") && v.dataset.poster) v.setAttribute("poster", v.dataset.poster);
+    var w = +(v.dataset.w || (sources[0] && sources[0].w) || 16), h = +(v.dataset.h || (sources[0] && sources[0].h) || 9);
+    var box = document.createElement("div"); box.className = "vp-box"; box.style.aspectRatio = w + " / " + h;
+    v.parentNode.insertBefore(box, v); box.appendChild(v); this.box = box; if (still()) box.classList.add("vp-tap");
+    var btn = document.createElement("button"); btn.type = "button"; btn.className = "vp-play"; btn.setAttribute("aria-label", "Play video");
+    btn.textContent = "▶"; box.appendChild(btn); this.btn = btn;
+    var self = this;
+    btn.addEventListener("click", function () { self.userPaused = false; self.started = true; self.play(); });
+    v.addEventListener("click", function () { if (still() && !v.paused) { v.pause(); self.userPaused = true; } });
+    v.addEventListener("playing", function () { box.classList.add("vp-playing"); });
+    v.addEventListener("pause", function () { box.classList.remove("vp-playing"); });
+    v.addEventListener("error", function () { self.next("error " + (v.error && v.error.code), self.cur); });
+  }
+  Player.prototype.choose = function () {
+    var self = this;
+    if (!this.choosing) this.choosing = rank(this.sources, this.v).then(function (q) { self.queue = q; self.load(); });
+    return this.choosing;
+  };
+  Player.prototype.load = function () {
+    var c = this.queue && this.queue[0], v = this.v;
+    if (!c) { v.dataset.chosen = ""; v.dataset.chosenWhy = "no playable source"; return; }
+    this.cur = c.s.src; v.dataset.chosen = c.s.src; v.dataset.chosenType = c.s.type || ""; v.dataset.chosenWhy = "tier " + c.tier + ": " + c.why;
+    v.preload = "auto"; v.src = c.s.src; v.load();
+    v.dispatchEvent(new CustomEvent("vp:chosen", { detail: { src: c.s.src, type: c.s.type, tier: c.tier, why: c.why } }));
+    if (this.visible && (this.started || !still())) this.play();
+  };
+  Player.prototype.next = function (why, src) {
+    if (!this.queue || !this.queue.length || this.queue[0].s.src !== src) return;   // stale or duplicate failure report
+    var failed = this.queue.shift();
+    (this.v.dataset.failed = ((this.v.dataset.failed ? this.v.dataset.failed + " | " : "") + failed.s.src + " (" + why + ")"));
+    this.load();
+  };
+  Player.prototype.play = function () {
+    var self = this, v = this.v, cur = this.cur;
+    if (!this.queue) { this.choose(); return; }
+    var p = v.play();
+    if (p && p.catch) p.catch(function (e) {
+      if (e && e.name === "NotSupportedError") self.next("play " + e.name, cur);
+      else if (e && e.name === "NotAllowedError") self.box.classList.add("vp-tap");   // autoplay refused (e.g. power saving): show the play button
+    });
+  };
+  Player.prototype.onNear = function () { this.choose(); };
+  Player.prototype.onVisible = function (on) {
+    this.visible = on;
+    if (on) { if (!this.userPaused && (this.started || !still())) this.play(); }
+    else if (!this.always && !this.v.paused) this.v.pause();
+  };
+
+  var players = [], nearIO, showIO;
+  function scan(root) {
+    addStyle();
+    var vids = (root || document).querySelectorAll("video[data-sources]");
+    for (var i = 0; i < vids.length; i++) {
+      var v = vids[i]; if (v.__vp) continue;
+      var p = new Player(v); v.__vp = p; players.push(p);
+      if (v.dataset.always === "1") { p.always = true; p.started = !still(); p.onNear(); p.onVisible(true); continue; }   // the film: starts at once, loops nonstop (never paused when scrolled away)
+      if (nearIO && showIO) { nearIO.observe(v); showIO.observe(v); } else { p.onNear(); p.onVisible(true); }
+    }
+    return players;
+  }
+  if ("IntersectionObserver" in window) {
+    nearIO = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { e.target.__vp.onNear(); nearIO.unobserve(e.target); } });
+    }, { rootMargin: NEAR });
+    showIO = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { e.target.__vp.onVisible(e.isIntersecting && e.intersectionRatio >= SHOW); });
+    }, { threshold: [0, SHOW, 0.6] });
+  }
+  document.addEventListener("visibilitychange", function () {
+    players.forEach(function (p) { if (document.hidden) { if (!p.v.paused) p.v.pause(); } else if (p.visible) p.onVisible(true); });
+  });
+  if (reduced.addEventListener) reduced.addEventListener("change", function () {
+    players.forEach(function (p) {
+      p.box.classList.toggle("vp-tap", still());
+      if (still() && !p.started && !p.v.paused) p.v.pause(); else if (p.visible) p.onVisible(true);
+    });
+  });
+
+  window.VideoPlayer = { scan: scan, players: players };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { scan(); });
+  else scan();
+})();
+
+/* The film's sound toggle: the page starts every video muted (browsers allow no sound before a click) */
+document.querySelectorAll(".sound").forEach(function (b) {
+  b.addEventListener("click", function () {
+    var v = document.querySelector(".film video");
+    if (!v) return;
+    v.muted = !v.muted;
+    var label = b.querySelector("span"); if (label) label.textContent = v.muted ? "Sound on" : "Sound off";
+    b.setAttribute("aria-pressed", String(!v.muted));
+    if (v.paused) v.play().catch(function () {});
+  });
+});
+</script>
+
+</body>
+</html>
